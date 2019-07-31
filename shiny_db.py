@@ -16,14 +16,27 @@ def create_table(conn, create_table_sql):
     except Exception as e:
         print(e)
 
+def create_project(conn, project):
+    sql = '''INSERT INTO shiny_hunts(target, gen, encounters)
+            VALUES(?, ?, ?) '''
+
+    cur = conn.cursor()
+    cur.execute(sql, project)
+    return cur.lastrowid
+
 if __name__ == "__main__":
     database = "shiny_pokemon.db"
     start = """CREATE TABLE IF NOT EXISTS shiny_hunts (
         target text PRIMARY KEY, gen integer NOT NULL,
         encounters integer);"""
+
     conn = create_connection(database)
 
     if conn:
         create_table(conn, start)
     else:
         print("Error")
+
+    with conn:
+        project = ("Cyndaquil", 6, 576)
+        project_id = create_project(conn, project)
